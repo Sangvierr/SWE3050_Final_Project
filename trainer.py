@@ -31,11 +31,12 @@ class Trainer:
             "SGD": SGDClassifier(random_state=42)
         }
 
-    def _evaluate_model(self, y_pred, model_name, training_time, prediction_time):
-        accuracy = accuracy_score(self.y_test, y_pred)
-        precision = precision_score(self.y_test, y_pred, average='macro')
-        recall = recall_score(self.y_test, y_pred, average='macro')
-        f1 = f1_score(self.y_test, y_pred, average='macro')
+    @staticmethod
+    def _evaluate_model(y_test, y_pred, model_name, training_time, prediction_time):
+        accuracy = accuracy_score(y_test, y_pred)
+        precision = precision_score(y_test, y_pred, average='macro')
+        recall = recall_score(y_test, y_pred, average='macro')
+        f1 = f1_score(y_test, y_pred, average='macro')
 
         return {
             "Model": model_name,
@@ -64,7 +65,7 @@ class Trainer:
             y_pred = model.predict(K_test)
             prediction_time = time.time() - pred_start_time
 
-            results.append(self._evaluate_model(y_pred, kernel_name, training_time, prediction_time))
+            results.append(self._evaluate_model(self.y_test, y_pred, kernel_name, training_time, prediction_time))
             print(f'▶ {kernel_name} 학습 완료 (Training Time: {training_time:.2f}s)')
         return results
 
@@ -80,17 +81,23 @@ class Trainer:
             y_pred = model.predict(self.X_test)
             prediction_time = time.time() - pred_start_time
 
-            results.append(self._evaluate_model(y_pred, model_name, training_time, prediction_time))
+            results.append(self._evaluate_model(self.y_test, y_pred, model_name, training_time, prediction_time))
             print(f'▶ {model_name} 학습 완료 (Training Time: {training_time:.2f}s)')
         return results
 
-    def train_all_models(self):
+    def train_all_models(self, show_all_result=True):
         print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) 타겟 모델 학습 시작...')
         target_results = self._train_target_models()
         print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) 타겟 모델 학습 종료')
         
-        print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) 비교 모델 학습 시작...')
-        compare_results = self._train_compare_models()
-        print(f'({strftime("%Y-%m-%d %H:%M", localtime())})) 비교 모델 학습 종료')
+        # 비교 모델 학습 (조건부 실행)
+        if show_all_result:
+            print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) 비교 모델 학습 시작...')
+            compare_results = self._train_compare_models()
+            print(f'({strftime("%Y-%m-%d %H:%M", localtime())})) 비교 모델 학습 종료')
+            
+            # 타겟 모델 + 비교 모델 결과 반환
+            return pd.DataFrame(target_results + compare_results) 
         
-        return pd.DataFrame(target_results + compare_results)
+        # 타겟 모델 결과만 반환
+        return pd.DataFrame(target_results)
