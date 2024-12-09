@@ -85,13 +85,13 @@ class Trainer:
             print(f'▶ {model_name} 학습 완료 (Training Time: {training_time:.2f}s)')
         return results
 
-    def train_all_models(self, show_all_result=True):
+    def train_all_models(self, only_target=False):
         print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) 타겟 모델 학습 시작...')
         target_results = self._train_target_models()
         print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) 타겟 모델 학습 종료')
         
         # 비교 모델 학습 (조건부 실행)
-        if show_all_result:
+        if not only_target:
             print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) 비교 모델 학습 시작...')
             compare_results = self._train_compare_models()
             print(f'({strftime("%Y-%m-%d %H:%M", localtime())})) 비교 모델 학습 종료')
