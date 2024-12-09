@@ -1,6 +1,6 @@
 import numpy as np
 
-# 가중 자카드 커널 함수 정의
+# weighted jaccard 커널 정의
 def weighted_jaccard_kernel(X1, X2):
     kernel_matrix = np.zeros((len(X1), len(X2)))
     for i, vec1 in enumerate(X1):
