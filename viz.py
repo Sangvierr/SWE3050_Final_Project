@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+from umap import UMAP
+
 # 실험 1, 2 결과 시각화 함수
 def plot_experiment_v1(result):
     colors = plt.cm.tab10(range(len(result["Model"])))
@@ -94,4 +98,60 @@ def plot_experiment_v2(result):
     
     # 전체 레이아웃 조정
     plt.tight_layout(rect=[0, 0, 1, 0.95])
+    plt.show()
+    
+# IMDB 데이터 시각화
+def plot_embeddings_imdb(X_tfidf, X_kernel, y):
+    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+    reducers = {
+        "PCA": PCA(n_components=2),
+        "t-SNE": TSNE(n_components=2, perplexity=30, random_state=42),
+        "UMAP": UMAP(n_neighbors=15, min_dist=0.1, random_state=42),
+    }
+
+    for i, (name, reducer) in enumerate(reducers.items()):
+        # TF-IDF embeddings
+        Z_tfidf = reducer.fit_transform(X_tfidf)
+        axes[0, i].scatter(Z_tfidf[y == 0, 0], Z_tfidf[y == 0, 1], c="blue", s=3, label="Class 0")
+        axes[0, i].scatter(Z_tfidf[y == 1, 0], Z_tfidf[y == 1, 1], c="red", s=3, label="Class 1")
+        axes[0, i].set_title(f"TF-IDF Embeddings Visualization - {name}")
+
+        # Kernel embeddings
+        Z_kernel = reducer.fit_transform(X_kernel)
+        axes[1, i].scatter(Z_kernel[y == 0, 0], Z_kernel[y == 0, 1], c="blue", s=3, label="Class 0")
+        axes[1, i].scatter(Z_kernel[y == 1, 0], Z_kernel[y == 1, 1], c="red", s=3, label="Class 1")
+        axes[1, i].set_title(f"Weighted Jacard Kernel Embeddings Visualization - {name}")
+
+    plt.tight_layout()
+    plt.show()
+ 
+# 20newsgroups 데이터 시각화   
+def plot_embeddings_20news(X_tfidf, X_kernel, y, unique_classes):
+    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+    reducers = {
+        "PCA": PCA(n_components=2),
+        "t-SNE": TSNE(n_components=2, perplexity=30, random_state=42),
+        "UMAP": UMAP(n_neighbors=15, min_dist=0.1, random_state=42),
+    }
+
+    for i, (name, reducer) in enumerate(reducers.items()):
+        # TF-IDF embeddings
+        Z_tfidf = reducer.fit_transform(X_tfidf)
+        for class_label in unique_classes:
+            class_indices = (y == class_label)
+            axes[0, i].scatter(Z_tfidf[class_indices, 0], Z_tfidf[class_indices, 1], 
+                                s=3, label=f"Class {class_label}")
+        axes[0, i].set_title(f"TF-IDF Embeddings Visualization - {name}")
+        axes[0, i].legend(loc="upper right", fontsize=6)
+
+        # Kernel embeddings
+        Z_kernel = reducer.fit_transform(X_kernel)
+        for class_label in unique_classes:
+            class_indices = (y == class_label)
+            axes[1, i].scatter(Z_kernel[class_indices, 0], Z_kernel[class_indices, 1], 
+                                s=3, label=f"Class {class_label}")
+        axes[1, i].set_title(f"Weighted Jaccard Kernel Embeddings Visualization - {name}")
+        axes[1, i].legend(loc="upper right", fontsize=6)
+
+    plt.tight_layout()
     plt.show()
