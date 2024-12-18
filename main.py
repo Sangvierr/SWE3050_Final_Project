@@ -3,6 +3,7 @@ warnings.filterwarnings('ignore')
 
 import pandas as pd
 import numpy as np
+from time import strftime, localtime
 
 from utils import load_20newsgroups, load_imdb, preprocess
 from viz import plot_experiment_v1, plot_experiment_v2, plot_embeddings_imdb, plot_embeddings_20news
@@ -83,7 +84,9 @@ def viz1():
     X_train, _, y_train, _ = preprocess(X, y, is_imdb=True)
 
     # Apply custom kernel
+    print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) Custom Kernel 적용 시작...')
     X_kernel = weighted_jaccard_kernel(X_train, X_train)
+    print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) Custom Kernel 적용 완료')
 
     # Visualize embeddings
     plot_embeddings_imdb(X_train, X_kernel, y_train)
@@ -96,7 +99,9 @@ def viz2():
     X_train, _, y_train, _ = preprocess(X, y)
 
     # Apply custom kernel
+    print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) Custom Kernel 적용 시작...')
     X_kernel = weighted_jaccard_kernel(X_train, X_train)
+    print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) Custom Kernel 적용 완료')
 
     # Visualize embeddings
     unique_classes = np.unique(y_train)
