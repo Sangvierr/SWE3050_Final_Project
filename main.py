@@ -2,10 +2,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 import pandas as pd
+import numpy as np
 
 from utils import load_20newsgroups, load_imdb, preprocess
-from viz import plot_experiment_v1, plot_experiment_v2
+from viz import plot_experiment_v1, plot_experiment_v2, plot_embeddings_imdb, plot_embeddings_20news
 from trainer import Trainer
+from kernel import weighted_jaccard_kernel
 
 
 # 20newsgroups 실험
@@ -72,6 +74,34 @@ def main3():
     
     return pd.concat(result, ignore_index=True)
 
+# IMDB 데이터셋의 임베딩 벡터 시각화 실험
+def viz1():
+    print("\n[실험 4] IMDB 데이터셋의 임베딩 벡터 시각화\n")
+    
+    # Load and preprocess data
+    X, y = load_imdb()
+    X_train, _, y_train, _ = preprocess(X, y, is_imdb=True)
+
+    # Apply custom kernel
+    X_kernel = weighted_jaccard_kernel(X_train, X_train)
+
+    # Visualize embeddings
+    plot_embeddings_imdb(X_train, X_kernel, y_train)
+    
+def viz2():
+    print("\n[실험 5] 20Newsgroups 데이터셋 임베딩 벡터 시각화\n")
+
+    # Load and preprocess data
+    X, y = load_20newsgroups(size_per_class=100)
+    X_train, _, y_train, _ = preprocess(X, y)
+
+    # Apply custom kernel
+    X_kernel = weighted_jaccard_kernel(X_train, X_train)
+
+    # Visualize embeddings
+    unique_classes = np.unique(y_train)
+    plot_embeddings_20news(X_train, X_kernel, y_train, unique_classes)
+
     
 
 if __name__ == '__main__':
@@ -86,3 +116,7 @@ if __name__ == '__main__':
     result3 = main3()
     plot_experiment_v2(result3)
     result3.to_csv('result3.csv', index=False)
+    
+    # 시각화
+    viz1()
+    viz2()
