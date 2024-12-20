@@ -83,24 +83,9 @@ def main3():
     
     return pd.concat(result, ignore_index=True)
 
-# IMDB 데이터셋의 임베딩 벡터 시각화 실험
+# 20Newsgroups 데이터셋 임베딩 벡터 시각화 실험
 def viz1():
-    print("\n[실험 4] IMDB 데이터셋의 임베딩 벡터 시각화\n")
-    
-    # Load and preprocess data
-    X, y = load_imdb(sample_size=sample_size, num_words=num_words)
-    X_train, _, y_train, _ = preprocess(X, y, is_imdb=True)
-
-    # Apply custom kernel
-    print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) Custom Kernel 적용 시작...')
-    X_kernel = weighted_jaccard_kernel(X_train, X_train)
-    print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) Custom Kernel 적용 완료')
-
-    # Visualize embeddings
-    plot_embeddings_imdb(X_train, X_kernel, y_train)
-    
-def viz2():
-    print("\n[실험 5] 20Newsgroups 데이터셋 임베딩 벡터 시각화\n")
+    print("\n[실험 4] 20Newsgroups 데이터셋 임베딩 벡터 시각화\n")
 
     # Load and preprocess data
     X, y = load_20newsgroups(size_per_class=size_per_class, random_state=42)
@@ -115,6 +100,21 @@ def viz2():
     unique_classes = np.unique(y_train)
     plot_embeddings_20news(X_train, X_kernel, y_train, unique_classes)
 
+# IMDB 데이터셋의 임베딩 벡터 시각화 실험
+def viz2():
+    print("\n[실험 5] IMDB 데이터셋의 임베딩 벡터 시각화\n")
+    
+    # Load and preprocess data
+    X, y = load_imdb(sample_size=sample_size, num_words=num_words)
+    X_train, _, y_train, _ = preprocess(X, y, is_imdb=True)
+
+    # Apply custom kernel
+    print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) Custom Kernel 적용 시작...')
+    X_kernel = weighted_jaccard_kernel(X_train, X_train)
+    print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) Custom Kernel 적용 완료')
+
+    # Visualize embeddings
+    plot_embeddings_imdb(X_train, X_kernel, y_train)
     
 
 if __name__ == '__main__':
