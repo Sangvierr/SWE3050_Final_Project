@@ -1,6 +1,7 @@
 import warnings
 warnings.filterwarnings('ignore')
 
+import yaml
 import pandas as pd
 import numpy as np
 from time import strftime, localtime
@@ -10,12 +11,19 @@ from viz import plot_experiment_v1, plot_experiment_v2, plot_embeddings_imdb, pl
 from trainer import Trainer
 from kernel import weighted_jaccard_kernel
 
+with open("config.yaml", "r") as file:
+    config = yaml.safe_load(file)
+    
+# 설정값
+size_per_class=config['SIZE_PER_CLASS']
+sample_size=config['SAMPLE_SIZE']
+num_words=config['NUM_WORDS']
 
 # 20newsgroups 실험
 def main1():
     print("\n[실험 1] 20newsgroups 데이터셋을 활용한 다중분류 성능 비교\n")
     
-    X, y = load_20newsgroups(size_per_class=250, random_state=42) # 250개씩 20개 클래스 => 5000개
+    X, y = load_20newsgroups(size_per_class=size_per_class, random_state=42) # 250개씩 20개 클래스 => 5000개
     X_train, X_test, y_train, y_test = preprocess(X, y)
 
     # 학습 시작
@@ -31,7 +39,7 @@ def main1():
 def main2():
     print("\n[실험 2] IMDB 데이터셋을 활용한 이진분류 성능 비교\n")
     
-    X, y = load_imdb(sample_size=5000, num_words=5000) # 5000개
+    X, y = load_imdb(sample_size=sample_size, num_words=num_words) # 5000개
     X_train, X_test, y_train, y_test = preprocess(X, y, is_imdb=True)
 
     # 학습 시작
@@ -80,7 +88,7 @@ def viz1():
     print("\n[실험 4] IMDB 데이터셋의 임베딩 벡터 시각화\n")
     
     # Load and preprocess data
-    X, y = load_imdb()
+    X, y = load_imdb(sample_size=sample_size, num_words=num_words)
     X_train, _, y_train, _ = preprocess(X, y, is_imdb=True)
 
     # Apply custom kernel
@@ -95,7 +103,7 @@ def viz2():
     print("\n[실험 5] 20Newsgroups 데이터셋 임베딩 벡터 시각화\n")
 
     # Load and preprocess data
-    X, y = load_20newsgroups(size_per_class=100)
+    X, y = load_20newsgroups(size_per_class=size_per_class, random_state=42)
     X_train, _, y_train, _ = preprocess(X, y)
 
     # Apply custom kernel
