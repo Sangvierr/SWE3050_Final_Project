@@ -94,7 +94,7 @@ class Trainer:
         if not only_target:
             print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) 비교 모델 학습 시작...')
             compare_results = self._train_compare_models()
-            print(f'({strftime("%Y-%m-%d %H:%M", localtime())})) 비교 모델 학습 종료')
+            print(f'({strftime("%Y-%m-%d %H:%M", localtime())}) 비교 모델 학습 종료')
             
             # 타겟 모델 + 비교 모델 결과 반환
             return pd.DataFrame(target_results + compare_results) 
