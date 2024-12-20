@@ -139,17 +139,17 @@ def plot_embeddings_20news(X_tfidf, X_kernel, y, unique_classes):
         Z_tfidf = reducer.fit_transform(X_tfidf)
         for class_label in unique_classes:
             class_indices = (y == class_label)
-            axes[0, i].scatter(Z_tfidf[class_indices, 0], Z_tfidf[class_indices, 1], s=3, label=f"Class {class_label}")
+            axes[0, i].scatter(Z_tfidf[class_indices, 0], Z_tfidf[class_indices, 1], s=4, label=f"Class {class_label}")
         axes[0, i].set_title(f"TF-IDF Embeddings Visualization - {name}")
-        axes[0, i].legend(loc="upper right", fontsize=3)
+        axes[0, i].legend(loc="lower right", fontsize=6, bbox_to_anchor=(1.05, 0.05))
 
         # Kernel embeddings
         Z_kernel = reducer.fit_transform(X_kernel)
         for class_label in unique_classes:
             class_indices = (y == class_label)
-            axes[1, i].scatter(Z_kernel[class_indices, 0], Z_kernel[class_indices, 1], s=3, label=f"Class {class_label}")
+            axes[1, i].scatter(Z_kernel[class_indices, 0], Z_kernel[class_indices, 1], s=4, label=f"Class {class_label}")
         axes[1, i].set_title(f"Weighted Jaccard Kernel Embeddings Visualization - {name}")
-        axes[1, i].legend(loc="upper right", fontsize=3)
+        axes[1, i].legend(loc="lower right", fontsize=6, bbox_to_anchor=(1.05, 0.05))
 
     plt.tight_layout()
     plt.show()
